@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdfbf4;
+  --foreground: #2a2a1f;
+
+  --color-brand-50: #f2f8ec;
+  --color-brand-100: #e0eecf;
+  --color-brand-200: #c3dea3;
+  --color-brand-300: #9dc971;
+  --color-brand-400: #7ab04a;
+  --color-brand-500: #5c8f34;
+  --color-brand-600: #457027;
+  --color-brand-700: #365821;
+  --color-brand-800: #2c461d;
+  --color-brand-900: #253b1b;
+
+  --color-earth-50: #faf6ee;
+  --color-earth-100: #f1e7d3;
+  --color-earth-200: #e2caa2;
+  --color-earth-300: #cfa869;
+  --color-earth-400: #bd8c46;
+  --color-earth-500: #a8722f;
+  --color-earth-600: #8b5a26;
+  --color-earth-700: #6f4622;
+  --color-earth-800: #5c3a20;
+  --color-earth-900: #4d311d;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-devanagari: var(--font-noto-devanagari);
+
+  --color-brand-50: var(--color-brand-50);
+  --color-brand-100: var(--color-brand-100);
+  --color-brand-200: var(--color-brand-200);
+  --color-brand-300: var(--color-brand-300);
+  --color-brand-400: var(--color-brand-400);
+  --color-brand-500: var(--color-brand-500);
+  --color-brand-600: var(--color-brand-600);
+  --color-brand-700: var(--color-brand-700);
+  --color-brand-800: var(--color-brand-800);
+  --color-brand-900: var(--color-brand-900);
+
+  --color-earth-50: var(--color-earth-50);
+  --color-earth-100: var(--color-earth-100);
+  --color-earth-200: var(--color-earth-200);
+  --color-earth-300: var(--color-earth-300);
+  --color-earth-400: var(--color-earth-400);
+  --color-earth-500: var(--color-earth-500);
+  --color-earth-600: var(--color-earth-600);
+  --color-earth-700: var(--color-earth-700);
+  --color-earth-800: var(--color-earth-800);
+  --color-earth-900: var(--color-earth-900);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+html[lang="mr"],
+html[lang="hi"] {
+  font-family: var(--font-devanagari), var(--font-sans), Arial, sans-serif;
+}
+
+html[lang="en"] {
+  font-family: var(--font-sans), Arial, sans-serif;
+}

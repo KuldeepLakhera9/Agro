@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" width="100%" height="100%">
+  <defs>
+    <!-- Organic gradients -->
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2d6a4f" />
+      <stop offset="100%" stop-color="#1b4332" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <linearGradient id="oilDropGrad" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="60%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+    <filter id="naturalShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1b4332" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- BRAND EMBLEM / SEAL -->
+  <g transform="translate(60, 60)" filter="url(#naturalShadow)">
+    <!-- Outer concentric ring -->
+    <circle r="48" fill="#fcfaf2" stroke="#2d6a4f" stroke-width="2" />
+    <circle r="44" fill="none" stroke="#d97706" stroke-width="1.2" stroke-dasharray="3,2" />
+    <circle r="38" fill="url(#leafGrad)" />
+
+    <!-- Twin Golden Wheat Ears Wreath -->
+    <g fill="#fef3c7" stroke="#b45309" stroke-width="0.5">
+      <!-- Left wheat grains -->
+      <path d="M-22,-6 C-28,-12 -24,-22 -14,-22 C-16,-14 -18,-8 -22,-6 Z" />
+      <path d="M-26,4 C-32,-2 -30,-12 -20,-12 C-22,-4 -23,2 -26,4 Z" />
+      <path d="M-24,15 C-30,10 -28,0 -18,2 C-20,9 -21,13 -24,15 Z" />
+      <path d="M-18,25 C-23,22 -22,12 -12,16 C-14,21 -16,24 -18,25 Z" />
+      <!-- Right wheat grains -->
+      <path d="M22,-6 C28,-12 24,-22 14,-22 C16,-14 18,-8 22,-6 Z" />
+      <path d="M26,4 C32,-2 30,-12 20,-12 C22,-4 23,2 26,4 Z" />
+      <path d="M24,15 C30,10 28,0 18,2 C20,9 21,13 24,15 Z" />
+      <path d="M18,25 C23,22 22,12 12,16 C14,21 16,24 18,25 Z" />
+    </g>
+
+    <!-- Traditional Wooden Ghani / Mortar Base & Golden Oil Drop -->
+    <!-- Ghani Mortar silhouette -->
+    <path d="M-16,14 L16,14 L12,28 C12,31 -12,31 -12,28 Z" fill="#92400e" stroke="#fef3c7" stroke-width="1" />
+    <rect x="-17" y="12" width="34" height="4" rx="2" fill="#b45309" />
+    
+    <!-- Central Golden Cold-Press Oil Droplet -->
+    <path d="M0,-24 C6,-15 16,-2 16,8 C16,17 7.5,23 0,23 C-7.5,23 -16,17 -16,8 C-16,-2 -6,-15 0,-24 Z" fill="url(#oilDropGrad)" stroke="#fef3c7" stroke-width="1.2" />
+    
+    <!-- Organic Green Sprout Leaf inside droplet -->
+    <path d="M0,14 C-4,10 -6,4 -2,-2 C0,-5 2,-2 2,4 C4,0 6,-3 8,-2 C9,3 6,9 0,14 Z" fill="#52b788" />
+    
+    <!-- Glow Highlight on Oil Droplet -->
+    <ellipse cx="-4" cy="5" rx="3.5" ry="6" transform="rotate(-25 -4 5)" fill="#fff" opacity="0.65" />
+    
+    <!-- Small traditional sunburst / star on top -->
+    <polygon points="0,-33 2,-30 5,-31 3,-28 4,-25 1,-26 0,-28 -1,-26 -4,-25 -3,-28 -5,-31 -2,-30" fill="#f59e0b" />
+  </g>
+
+  <!-- BRAND NAME & DEVANGARI CALLIGRAPHIC TYPOGRAPHY -->
+  <g transform="translate(130, 20)">
+    <!-- Spiritual Blessing Line -->
+    <text x="0" y="14" font-family="'Noto Sans Devanagari', 'Yantramanav', 'Mukta', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#b45309" letter-spacing="1">
+      ॥ श्री दत्त प्रसन्न ॥
+    </text>
+
+    <!-- Main Title in Authentic Devanagari -->
+    <text x="0" y="48" font-family="'Yantramanav', 'Mukta', 'Noto Sans Devanagari', system-ui, sans-serif" font-size="34" font-weight="900" fill="#1b4332" letter-spacing="0.5">
+      आईसाहेब <tspan fill="#b45309" font-weight="800">ॲग्रो इंडस्ट्रीज</tspan>
+    </text>
+
+    <!-- Natural Tagline & Subtitle with badges -->
+    <g transform="translate(0, 72)">
+      <!-- Farmer Direct Badge -->
+      <rect x="0" y="-14" width="168" height="20" rx="4" fill="#2d6a4f" />
+      <text x="84" y="0" text-anchor="middle" font-family="'Noto Sans Devanagari', 'Mukta', sans-serif" font-size="11" font-weight="700" fill="#ffffff">
+        शेतकरी ते ग्राहक थेट सेवा
+      </text>
+
+      <!-- Subtitle: Grains & Cold Pressed Oil -->
+      <text x="180" y="0" font-family="'Noto Sans Devanagari', 'Mukta', sans-serif" font-size="12" font-weight="700" fill="#4b5563">
+        धान्य व कोल्ड प्रेस ऑइल केंद्र • रशीन (कर्जत)
+      </text>
+    </g>
+
+    <!-- English subtle subtext -->
+    <text x="0" y="92" font-family="system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="600" fill="#6b7280" letter-spacing="1.5">
+      AAISAHEB AGRO INDUSTRIES • 100% PURE &amp; NATURAL
+    </text>
+  </g>
+</svg>

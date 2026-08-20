@@ -207,7 +207,7 @@ export default async function HomePage() {
             <div key={i} className="rounded-2xl border border-brand-100 bg-white p-6 shadow-xs">
               <div className="text-amber-500 text-sm mb-2">★★★★★</div>
               <p className="text-sm leading-relaxed text-foreground/80">
-                "{t(`testimonial${i}` as never)}"
+                &ldquo;{t(`testimonial${i}` as never)}&rdquo;
               </p>
               <p className="mt-4 text-sm font-bold text-brand-800">
                 — {t(`testimonial${i}Author` as never)}

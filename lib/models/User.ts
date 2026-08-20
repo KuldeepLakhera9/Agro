@@ -1,4 +1,5 @@
 import { Schema, model, models, type InferSchemaType } from "mongoose";
+import { ROLES } from "@/lib/roles";
 
 const AddressSchema = new Schema(
   {
@@ -18,7 +19,7 @@ const UserSchema = new Schema(
     phone: { type: String, required: true, unique: true }, // E.164, e.g. +9198765xxxxx
     name: { type: String },
     addresses: { type: [AddressSchema], default: [] },
-    isAdmin: { type: Boolean, default: false },
+    role: { type: String, enum: ROLES, default: "customer", index: true },
   },
   { timestamps: true },
 );

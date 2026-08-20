@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { getAdminTranslations } from "@/lib/adminLocale";
 import { connectDB } from "@/lib/db";
 import Product from "@/lib/models/Product";
 import ProductForm from "@/components/admin/ProductForm";
@@ -13,11 +14,12 @@ export default async function EditProductPage({
   await connectDB();
   const product = await Product.findById(id).lean();
   if (!product) notFound();
+  const t = await getAdminTranslations("Admin.Catalog");
 
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-brand-800">Edit Product</h1>
+        <h1 className="text-2xl font-bold text-brand-800">{t("editProduct")}</h1>
         <DeleteProductButton productId={String(product._id)} />
       </div>
       <div className="mt-6">

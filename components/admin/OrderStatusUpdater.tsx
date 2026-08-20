@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ORDER_STATUSES } from "@/lib/orderStatuses";
 
 export default function OrderStatusUpdater({
@@ -14,6 +15,9 @@ export default function OrderStatusUpdater({
   currentDriver?: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("Admin.Orders");
+  const tStatus = useTranslations("Orders");
+  const tErrors = useTranslations("Errors");
   const [status, setStatus] = useState(currentStatus);
   const [driverName, setDriverName] = useState(currentDriver ?? "");
   const [busy, setBusy] = useState(false);
@@ -29,8 +33,7 @@ export default function OrderStatusUpdater({
         body: JSON.stringify({ status, driverName: driverName || undefined }),
       });
       if (!res.ok) {
-        const data = await res.json();
-        setError(data.error ?? "Failed to update.");
+        setError(tErrors("generic"));
         return;
       }
       router.refresh();
@@ -41,9 +44,11 @@ export default function OrderStatusUpdater({
 
   return (
     <div className="rounded-xl border border-earth-200 bg-white p-5">
-      <h2 className="font-semibold text-foreground">Update Order</h2>
+      <h2 className="font-semibold text-foreground">{t("updateOrder")}</h2>
 
-      <label className="mt-4 block text-sm font-medium text-foreground/70">Status</label>
+      <label className="mt-4 block text-sm font-medium text-foreground/70">
+        {t("colStatus")}
+      </label>
       <select
         value={status}
         onChange={(e) => setStatus(e.target.value)}
@@ -51,18 +56,18 @@ export default function OrderStatusUpdater({
       >
         {ORDER_STATUSES.map((s) => (
           <option key={s} value={s}>
-            {s.replace(/_/g, " ")}
+            {tStatus(`status_${s}` as never)}
           </option>
         ))}
       </select>
 
       <label className="mt-4 block text-sm font-medium text-foreground/70">
-        Driver / Delivery Person (optional)
+        {t("driverLabel")}
       </label>
       <input
         value={driverName}
         onChange={(e) => setDriverName(e.target.value)}
-        placeholder="e.g. Amol"
+        placeholder={t("driverPlaceholder")}
         className="mt-1 w-full rounded-lg border border-earth-200 px-3 py-2 text-sm"
       />
 
@@ -73,7 +78,7 @@ export default function OrderStatusUpdater({
         disabled={busy}
         className="mt-4 w-full rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
       >
-        {busy ? "Updating…" : "Update Order"}
+        {busy ? t("updating") : t("updateOrder")}
       </button>
     </div>
   );

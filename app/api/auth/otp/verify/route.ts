@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { verifyOtp } from "@/lib/auth/otpProvider";
 import { createSession } from "@/lib/auth/session";
-import { isAdminPhone } from "@/lib/auth/adminAllowlist";
+import { isOwnerPhone } from "@/lib/auth/adminAllowlist";
 import { connectDB } from "@/lib/db";
 import User from "@/lib/models/User";
 
@@ -25,18 +25,24 @@ export async function POST(request: NextRequest) {
   }
 
   await connectDB();
-  const admin = isAdminPhone(phone);
-  const user = await User.findOneAndUpdate(
-    { phone: `+91${phone}` },
-    { $setOnInsert: { phone: `+91${phone}` }, $set: { isAdmin: admin } },
-    { upsert: true, returnDocument: "after" },
-  );
+  // ADMIN_PHONES always wins the "owner" role on every login. Otherwise
+  // leave role untouched on an existing user — staff roles are granted via
+  // /admin/settings/users and must never be silently reset to "customer"
+  // just because someone logged back in.
+  const update = isOwnerPhone(phone)
+    ? { $setOnInsert: { phone: `+91${phone}` }, $set: { role: "owner" as const } }
+    : { $setOnInsert: { phone: `+91${phone}` } };
+
+  const user = await User.findOneAndUpdate({ phone: `+91${phone}` }, update, {
+    upsert: true,
+    returnDocument: "after",
+  });
 
   await createSession({
     userId: String(user._id),
     phone: user.phone,
-    isAdmin: admin,
+    role: user.role,
   });
 
-  return NextResponse.json({ ok: true, isAdmin: admin });
+  return NextResponse.json({ ok: true, role: user.role });
 }

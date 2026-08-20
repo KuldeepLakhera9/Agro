@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getSession } from "@/lib/auth/session";
+import { requireAdmin } from "@/lib/auth/requireAdmin";
 import { connectDB } from "@/lib/db";
 import Order, { ORDER_STATUSES } from "@/lib/models/Order";
 import { notify } from "@/lib/notifications/notify";
@@ -14,10 +14,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await getSession();
-  if (!session?.isAdmin) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  }
+  const { session, response } = await requireAdmin();
+  if (!session) return response;
 
   const { id } = await params;
   const body = await request.json().catch(() => null);

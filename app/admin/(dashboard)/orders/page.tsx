@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getAdminTranslations } from "@/lib/adminLocale";
 import { connectDB } from "@/lib/db";
 import Order, { ORDER_STATUSES } from "@/lib/models/Order";
 import { formatPrice } from "@/lib/format";
@@ -10,6 +11,10 @@ export default async function AdminOrdersPage({
 }) {
   const { status } = await searchParams;
   await connectDB();
+  const [t, tStatus] = await Promise.all([
+    getAdminTranslations("Admin.Orders"),
+    getAdminTranslations("Orders"),
+  ]);
 
   const query: Record<string, unknown> = {};
   if (status && (ORDER_STATUSES as readonly string[]).includes(status)) {
@@ -19,7 +24,7 @@ export default async function AdminOrdersPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-brand-800">Orders</h1>
+      <h1 className="text-2xl font-bold text-brand-800">{t("title")}</h1>
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Link
@@ -28,7 +33,7 @@ export default async function AdminOrdersPage({
             !status ? "bg-brand-600 text-white" : "bg-white text-foreground/70"
           }`}
         >
-          All
+          {t("all")}
         </Link>
         {ORDER_STATUSES.map((s) => (
           <Link
@@ -38,7 +43,7 @@ export default async function AdminOrdersPage({
               status === s ? "bg-brand-600 text-white" : "bg-white text-foreground/70"
             }`}
           >
-            {s.replace(/_/g, " ")}
+            {tStatus(`status_${s}` as never)}
           </Link>
         ))}
       </div>
@@ -47,11 +52,11 @@ export default async function AdminOrdersPage({
         <table className="w-full text-sm">
           <thead className="border-b border-earth-200 text-left text-foreground/50">
             <tr>
-              <th className="px-4 py-3">Order</th>
-              <th className="px-4 py-3">Placed</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Payment</th>
-              <th className="px-4 py-3 text-right">Total</th>
+              <th className="px-4 py-3">{t("colOrder")}</th>
+              <th className="px-4 py-3">{t("colPlaced")}</th>
+              <th className="px-4 py-3">{t("colStatus")}</th>
+              <th className="px-4 py-3">{t("colPayment")}</th>
+              <th className="px-4 py-3 text-right">{t("colTotal")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-earth-100">
@@ -67,7 +72,7 @@ export default async function AdminOrdersPage({
                 </td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700">
-                    {o.status.replace(/_/g, " ")}
+                    {tStatus(`status_${o.status}` as never)}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-foreground/70">
@@ -79,7 +84,7 @@ export default async function AdminOrdersPage({
           </tbody>
         </table>
         {orders.length === 0 && (
-          <p className="px-4 py-8 text-center text-foreground/50">No orders yet.</p>
+          <p className="px-4 py-8 text-center text-foreground/50">{t("noOrders")}</p>
         )}
       </div>
     </div>

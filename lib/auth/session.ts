@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import type { Role } from "@/lib/roles";
 
 const SESSION_COOKIE = "aisaheb_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
@@ -15,7 +16,7 @@ function getSecret() {
 export interface SessionPayload {
   userId: string;
   phone: string;
-  isAdmin: boolean;
+  role: Role;
 }
 
 export async function createSession(payload: SessionPayload) {
@@ -45,7 +46,7 @@ export async function getSession(): Promise<SessionPayload | null> {
     return {
       userId: payload.userId as string,
       phone: payload.phone as string,
-      isAdmin: Boolean(payload.isAdmin),
+      role: (payload.role as Role) ?? "customer",
     };
   } catch {
     return null;

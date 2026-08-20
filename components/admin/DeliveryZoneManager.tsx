@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface Zone {
   _id: string;
@@ -11,6 +12,7 @@ interface Zone {
 
 export default function DeliveryZoneManager({ zones }: { zones: Zone[] }) {
   const router = useRouter();
+  const t = useTranslations("Admin.Settings");
   const [pincode, setPincode] = useState("");
   const [area, setArea] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +21,7 @@ export default function DeliveryZoneManager({ zones }: { zones: Zone[] }) {
   async function addZone() {
     setError(null);
     if (!/^\d{6}$/.test(pincode) || !area.trim()) {
-      setError("Enter a valid 6-digit pincode and area name.");
+      setError(t("invalidZoneError"));
       return;
     }
     setBusy(true);
@@ -31,7 +33,7 @@ export default function DeliveryZoneManager({ zones }: { zones: Zone[] }) {
       });
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error === "duplicate_pincode" ? "This pincode is already added." : "Failed to add.");
+        setError(data.error === "duplicate_pincode" ? t("duplicatePincodeError") : t("addZoneFailedError"));
         return;
       }
       setPincode("");
@@ -53,13 +55,13 @@ export default function DeliveryZoneManager({ zones }: { zones: Zone[] }) {
         <input
           value={pincode}
           onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          placeholder="Pincode"
+          placeholder={t("pincodePlaceholder")}
           className="w-32 rounded-lg border border-earth-200 px-3 py-2 text-sm"
         />
         <input
           value={area}
           onChange={(e) => setArea(e.target.value)}
-          placeholder="Area name (e.g. Karjat)"
+          placeholder={t("areaPlaceholder")}
           className="flex-1 rounded-lg border border-earth-200 px-3 py-2 text-sm"
         />
         <button
@@ -67,7 +69,7 @@ export default function DeliveryZoneManager({ zones }: { zones: Zone[] }) {
           disabled={busy}
           className="rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
         >
-          + Add
+          {t("addZone")}
         </button>
       </div>
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
@@ -79,12 +81,12 @@ export default function DeliveryZoneManager({ zones }: { zones: Zone[] }) {
               <span className="font-medium">{z.pincode}</span> — {z.area}
             </span>
             <button onClick={() => removeZone(z._id)} className="text-red-600 hover:underline">
-              Remove
+              {t("remove")}
             </button>
           </div>
         ))}
         {zones.length === 0 && (
-          <p className="px-4 py-8 text-center text-foreground/50">No delivery zones yet.</p>
+          <p className="px-4 py-8 text-center text-foreground/50">{t("noZones")}</p>
         )}
       </div>
     </div>

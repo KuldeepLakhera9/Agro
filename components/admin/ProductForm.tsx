@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface Variant {
   sku: string;
@@ -9,6 +10,12 @@ interface Variant {
   unitLabel: string;
   price: number;
   stock: number;
+}
+
+interface RawStock {
+  quantity: number;
+  unit: "kg" | "quintal";
+  lowStockThreshold: number;
 }
 
 interface ProductFormValue {
@@ -19,6 +26,7 @@ interface ProductFormValue {
   badges: string[];
   images: string[];
   variants: Variant[];
+  rawStock: RawStock;
   isActive: boolean;
 }
 
@@ -30,6 +38,7 @@ const EMPTY: ProductFormValue = {
   badges: [],
   images: [],
   variants: [{ sku: "", size: "", unitLabel: "", price: 0, stock: 0 }],
+  rawStock: { quantity: 0, unit: "kg", lowStockThreshold: 0 },
   isActive: true,
 };
 
@@ -43,7 +52,15 @@ export default function ProductForm({
   initial?: ProductFormValue;
 }) {
   const router = useRouter();
-  const [value, setValue] = useState<ProductFormValue>(initial ?? EMPTY);
+  const t = useTranslations("Admin.Catalog");
+  const tCommon = useTranslations("Admin.Common");
+  const tBadge = useTranslations("Product");
+  const tErrors = useTranslations("Errors");
+  const [value, setValue] = useState<ProductFormValue>({
+    ...EMPTY,
+    ...initial,
+    rawStock: initial?.rawStock ?? EMPTY.rawStock,
+  });
   const [imagesText, setImagesText] = useState((initial?.images ?? []).join("\n"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -90,8 +107,7 @@ export default function ProductForm({
         },
       );
       if (!res.ok) {
-        const data = await res.json();
-        setError(data.error ?? "Failed to save.");
+        setError(tErrors("generic"));
         return;
       }
       router.push("/admin/products");
@@ -104,7 +120,7 @@ export default function ProductForm({
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <label className="block text-sm font-medium text-foreground/70">Slug</label>
+        <label className="block text-sm font-medium text-foreground/70">{t("slug")}</label>
         <input
           value={value.slug}
           onChange={(e) => setValue({ ...value, slug: e.target.value })}
@@ -114,32 +130,32 @@ export default function ProductForm({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-foreground/70">Category</label>
+        <label className="block text-sm font-medium text-foreground/70">{t("category")}</label>
         <select
           value={value.category}
           onChange={(e) => setValue({ ...value, category: e.target.value as "oil" | "grain" })}
           className="mt-1 w-full rounded-lg border border-earth-200 px-3 py-2 text-sm"
         >
-          <option value="oil">Oil</option>
-          <option value="grain">Grain</option>
+          <option value="oil">{t("categoryOil")}</option>
+          <option value="grain">{t("categoryGrain")}</option>
         </select>
       </div>
 
       <div>
-        <p className="text-sm font-medium text-foreground/70">Name</p>
+        <p className="text-sm font-medium text-foreground/70">{t("name")}</p>
         {(["mr", "hi", "en"] as const).map((loc) => (
           <input
             key={loc}
             value={value.name[loc]}
             onChange={(e) => setValue({ ...value, name: { ...value.name, [loc]: e.target.value } })}
-            placeholder={`Name (${loc})`}
+            placeholder={t("namePlaceholder", { loc })}
             className="mt-1 w-full rounded-lg border border-earth-200 px-3 py-2 text-sm"
           />
         ))}
       </div>
 
       <div>
-        <p className="text-sm font-medium text-foreground/70">Description</p>
+        <p className="text-sm font-medium text-foreground/70">{t("description")}</p>
         {(["mr", "hi", "en"] as const).map((loc) => (
           <textarea
             key={loc}
@@ -147,7 +163,7 @@ export default function ProductForm({
             onChange={(e) =>
               setValue({ ...value, description: { ...value.description, [loc]: e.target.value } })
             }
-            placeholder={`Description (${loc})`}
+            placeholder={t("descriptionPlaceholder", { loc })}
             rows={2}
             className="mt-1 w-full rounded-lg border border-earth-200 px-3 py-2 text-sm"
           />
@@ -155,7 +171,7 @@ export default function ProductForm({
       </div>
 
       <div>
-        <p className="text-sm font-medium text-foreground/70">Badges</p>
+        <p className="text-sm font-medium text-foreground/70">{t("badges")}</p>
         <div className="mt-1 flex gap-3">
           {BADGES.map((b) => (
             <label key={b} className="flex items-center gap-1.5 text-sm">
@@ -164,7 +180,7 @@ export default function ProductForm({
                 checked={value.badges.includes(b)}
                 onChange={() => toggleBadge(b)}
               />
-              {b.replace(/_/g, " ")}
+              {tBadge(`badge_${b}` as never)}
             </label>
           ))}
         </div>
@@ -172,7 +188,7 @@ export default function ProductForm({
 
       <div>
         <label className="block text-sm font-medium text-foreground/70">
-          Image URLs (one per line)
+          {t("imageUrls")}
         </label>
         <textarea
           value={imagesText}
@@ -184,7 +200,7 @@ export default function ProductForm({
       </div>
 
       <div>
-        <p className="text-sm font-medium text-foreground/70">Variants (pack sizes)</p>
+        <p className="text-sm font-medium text-foreground/70">{t("variants")}</p>
         <div className="mt-2 space-y-2">
           {value.variants.map((variant, i) => (
             <div key={i} className="grid grid-cols-6 gap-2 rounded-lg border border-earth-200 p-2">
@@ -233,8 +249,47 @@ export default function ProductForm({
           ))}
         </div>
         <button onClick={addVariant} className="mt-2 text-sm text-brand-600 hover:underline">
-          + Add pack size
+          {t("addPackSize")}
         </button>
+      </div>
+
+      <div>
+        <p className="text-sm font-medium text-foreground/70">
+          {t("rawStockTitle")}
+        </p>
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          <input
+            type="number"
+            value={value.rawStock.quantity}
+            onChange={(e) =>
+              setValue({ ...value, rawStock: { ...value.rawStock, quantity: Number(e.target.value) } })
+            }
+            placeholder={t("rawStockOnHand")}
+            className="rounded-lg border border-earth-200 px-3 py-2 text-sm"
+          />
+          <select
+            value={value.rawStock.unit}
+            onChange={(e) =>
+              setValue({ ...value, rawStock: { ...value.rawStock, unit: e.target.value as "kg" | "quintal" } })
+            }
+            className="rounded-lg border border-earth-200 px-3 py-2 text-sm"
+          >
+            <option value="kg">kg</option>
+            <option value="quintal">quintal</option>
+          </select>
+          <input
+            type="number"
+            value={value.rawStock.lowStockThreshold}
+            onChange={(e) =>
+              setValue({
+                ...value,
+                rawStock: { ...value.rawStock, lowStockThreshold: Number(e.target.value) },
+              })
+            }
+            placeholder={t("rawStockThreshold")}
+            className="rounded-lg border border-earth-200 px-3 py-2 text-sm"
+          />
+        </div>
       </div>
 
       <label className="flex items-center gap-2 text-sm font-medium text-foreground/70">
@@ -243,7 +298,7 @@ export default function ProductForm({
           checked={value.isActive}
           onChange={(e) => setValue({ ...value, isActive: e.target.checked })}
         />
-        Active (visible in shop)
+        {t("activeVisible")}
       </label>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -253,7 +308,7 @@ export default function ProductForm({
         disabled={busy}
         className="rounded-full bg-brand-600 px-6 py-2.5 font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
       >
-        {busy ? "Saving…" : "Save Product"}
+        {busy ? tCommon("saving") : t("saveProduct")}
       </button>
     </div>
   );

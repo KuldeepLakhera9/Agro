@@ -24,13 +24,11 @@ is needed to test the flow.
 
 ## What's implemented
 
+**Storefront (Phase 1):**
 - Full customer flow: browse → product detail (variants, pincode delivery
   check) → cart → checkout (OTP login → address → delivery method → COD) →
   order confirmation → order tracking (`/orders/[id]`) → account/order
   history
-- Admin dashboard: order list/filter/status updates, product CRUD
-  (multi-locale name/description, per-variant price & stock), delivery zone
-  management, sales summary (today/week/month + top products)
 - Stock is decremented with an atomic, race-safe guard (`$elemMatch` +
   positional update) so two simultaneous checkouts can never oversell a
   variant — see `lib/queries/orders.ts` for the reasoning
@@ -38,6 +36,29 @@ is needed to test the flow.
   indexed, so a retried/duplicate submit never creates two orders
 - Checkout is gated by serviceable pincode (`DeliveryZone` collection),
   never a silently broken cart
+
+**Admin & procurement (Phase 2):**
+- Role-based access: `customer` / `staff` / `owner` on `User.role`.
+  `ADMIN_PHONES` (env) always resolves to `owner` on login; staff are
+  granted via `/admin/settings/users`. Enforced server-side on every
+  route via `requireAdmin()`/`requireOwner()` (`lib/auth/requireAdmin.ts`),
+  not just hidden nav links
+- Order management, product/catalog CRUD (multi-locale name/description,
+  per-variant price & stock, plus separate raw-material stock — see below),
+  sales summary, customer directory, audit log — all under `/admin`
+- **Procurement**: admin drafts a Purchase Request against a product and a
+  set of farmers → sends it (SMS/WhatsApp templated in Marathi) → farmer
+  opens a phone-OTP-verified, zero-install web form
+  (`/farmer/offer?requestId=...`) to submit quantity/price/ready-by date →
+  admin compares offers side by side and accepts one or several (split
+  fulfillment) → Goods Receipt records the delivery and atomically
+  increases the product's raw-material stock → farmer ledger tracks what's
+  owed vs. paid, with a printable statement and a post-delivery reliability
+  rating
+- A dashboard "Low Stock" panel scans raw-material stock against each
+  product's threshold and links straight into drafting a purchase request
+  for it — there's no cron/scheduler in this app, so this is a page-load
+  scan rather than a push alert (see Deferred below)
 
 ## Deliberately deferred integrations
 
@@ -52,6 +73,8 @@ credentials are available:
 | SMS/WhatsApp notifications | Logs to console | `lib/notifications/notify.ts` |
 | Product images | Local `/public/images/products/*.svg` placeholders | Swap the URL strings in each product's `images[]` (admin → Products) for Cloudinary/S3 URLs — no code change needed |
 | Database hosting | Local MongoDB (`mongodb://127.0.0.1:27017/aisaheb_agro`) | Swap `MONGODB_URI` in `.env.local` for an Atlas connection string |
+| WhatsApp Business API (farmer sourcing) | The web-form channel (`/farmer/offer`) is what's built — the brief's own recommended first step | Add a WhatsApp send call inside `lib/notifications/notify.ts`'s farmer-directed cases once Meta business verification is done |
+| Scheduled reminders ("nudge farmer after X hours") | Manual "Send Reminder" button per farmer on the purchase request detail page | Needs a real scheduler (e.g. Vercel Cron) calling a new endpoint that finds stale `sentTo` entries and calls the same reminder logic |
 
 ## Environment variables
 
@@ -75,6 +98,16 @@ no overselling, no cross-variant corruption).
 On MongoDB Atlas — always a replica set — the same claim-then-decrement
 sequence can optionally be wrapped in a `mongoose.startSession()`
 transaction for full multi-document atomicity, if desired.
+
+## Raw stock vs. sellable stock
+
+`Product.variants[].stock` (packaged, sellable units — a 500ml bottle, a
+5kg bag) and `Product.rawStock` (unpressed/unpackaged material on hand,
+e.g. quintals of raw groundnut) are deliberately separate fields with
+different units and magnitudes. Goods Receipts from farmers only ever
+increase `rawStock`; turning raw material into packaged variant stock (the
+actual pressing/packing step) is a manual admin edit on the product's pack
+sizes, same as before — this app doesn't model that conversion.
 
 ## Known non-issues
 

@@ -1,4 +1,4 @@
-export function isAdminPhone(tenDigitPhone: string) {
+export function isOwnerPhone(tenDigitPhone: string) {
   const list = (process.env.ADMIN_PHONES ?? "")
     .split(",")
     .map((p) => p.trim())

@@ -1,31 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/requireAdmin";
 import { connectDB } from "@/lib/db";
 import Product from "@/lib/models/Product";
-
-const localizedString = z.object({ mr: z.string().min(1), hi: z.string().min(1), en: z.string().min(1) });
-
-const productSchema = z.object({
-  slug: z.string().regex(/^[a-z0-9-]+$/),
-  name: localizedString,
-  category: z.enum(["oil", "grain"]),
-  description: localizedString,
-  badges: z.array(z.enum(["chemical_free", "cold_pressed", "grade_1"])),
-  images: z.array(z.string()),
-  variants: z
-    .array(
-      z.object({
-        sku: z.string().min(1),
-        size: z.string().min(1),
-        unitLabel: z.string().min(1),
-        price: z.number().min(0),
-        stock: z.number().int().min(0),
-      }),
-    )
-    .min(1),
-  isActive: z.boolean(),
-});
+import { productSchema } from "@/lib/validation/product";
+import { notify } from "@/lib/notifications/notify";
+import { pick } from "@/lib/localizedField";
+import { logAudit } from "@/lib/audit/log";
 
 export async function PATCH(
   request: NextRequest,
@@ -43,8 +23,31 @@ export async function PATCH(
 
   await connectDB();
   try {
-    const product = await Product.findByIdAndUpdate(id, parsed.data, { returnDocument: "after" });
+    // $set, not a plain replacement object — a plain object here would make
+    // MongoDB replace the whole document, silently wiping any field this
+    // form doesn't send (a real bug this project hit: edited products lost
+    // their rawStock because the form's payload didn't include it yet).
+    const product = await Product.findByIdAndUpdate(id, { $set: parsed.data }, { returnDocument: "after" });
     if (!product) return NextResponse.json({ error: "not_found" }, { status: 404 });
+
+    await logAudit({
+      userId: session.userId,
+      action: "product_stock_edited",
+      targetType: "Product",
+      targetId: id,
+      details: { rawStock: product.rawStock },
+    });
+
+    if (product.rawStock && product.rawStock.quantity < product.rawStock.lowStockThreshold) {
+      await notify({
+        type: "low_stock_alert",
+        productName: pick(product.name, "en"),
+        quantity: product.rawStock.quantity,
+        unit: product.rawStock.unit,
+        threshold: product.rawStock.lowStockThreshold,
+      });
+    }
+
     return NextResponse.json({ ok: true, product: product.toObject() });
   } catch (err: unknown) {
     if (typeof err === "object" && err && "code" in err && err.code === 11000) {

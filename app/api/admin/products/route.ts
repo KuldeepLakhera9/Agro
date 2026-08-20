@@ -1,31 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/requireAdmin";
 import { connectDB } from "@/lib/db";
 import Product from "@/lib/models/Product";
-
-const localizedString = z.object({ mr: z.string().min(1), hi: z.string().min(1), en: z.string().min(1) });
-
-const productSchema = z.object({
-  slug: z.string().regex(/^[a-z0-9-]+$/),
-  name: localizedString,
-  category: z.enum(["oil", "grain"]),
-  description: localizedString,
-  badges: z.array(z.enum(["chemical_free", "cold_pressed", "grade_1"])),
-  images: z.array(z.string()),
-  variants: z
-    .array(
-      z.object({
-        sku: z.string().min(1),
-        size: z.string().min(1),
-        unitLabel: z.string().min(1),
-        price: z.number().min(0),
-        stock: z.number().int().min(0),
-      }),
-    )
-    .min(1),
-  isActive: z.boolean(),
-});
+import { productSchema } from "@/lib/validation/product";
 
 export async function GET() {
   const { session, response } = await requireAdmin();

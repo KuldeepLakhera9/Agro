@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { SITE, telLink, whatsappLink } from "@/lib/constants";
 
 export default async function AboutPage() {

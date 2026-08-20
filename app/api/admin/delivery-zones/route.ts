@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAdmin } from "@/lib/auth/requireAdmin";
+import { requireOwner } from "@/lib/auth/requireAdmin";
 import { connectDB } from "@/lib/db";
 import DeliveryZone from "@/lib/models/DeliveryZone";
 
@@ -10,7 +10,7 @@ const schema = z.object({
 });
 
 export async function GET() {
-  const { session, response } = await requireAdmin();
+  const { session, response } = await requireOwner();
   if (!session) return response;
 
   await connectDB();
@@ -19,7 +19,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const { session, response } = await requireAdmin();
+  const { session, response } = await requireOwner();
   if (!session) return response;
 
   const body = await request.json().catch(() => null);

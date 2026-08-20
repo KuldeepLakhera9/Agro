@@ -20,6 +20,19 @@ const VariantSchema = new Schema(
   { _id: false },
 );
 
+// Raw material on hand for this product line (e.g. quintals of unpressed
+// groundnut) — distinct from `variants[].stock`, which is packaged sellable
+// units. Procurement (Goods Receipts) adds to this; converting it into
+// packaged variant stock is a manual admin step, not modeled here.
+const RawStockSchema = new Schema(
+  {
+    quantity: { type: Number, default: 0, min: 0 },
+    unit: { type: String, enum: ["kg", "quintal"], default: "kg" },
+    lowStockThreshold: { type: Number, default: 0, min: 0 },
+  },
+  { _id: false },
+);
+
 const ProductSchema = new Schema(
   {
     slug: { type: String, required: true, unique: true },
@@ -33,6 +46,7 @@ const ProductSchema = new Schema(
     },
     images: { type: [String], default: [] },
     variants: { type: [VariantSchema], default: [] },
+    rawStock: { type: RawStockSchema, default: () => ({}) },
     isActive: { type: Boolean, default: true, index: true },
   },
   { timestamps: true },

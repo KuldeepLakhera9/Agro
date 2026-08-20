@@ -117,7 +117,7 @@
     "sendOtp": "Send OTP",
     "otpLabel": "Enter OTP",
     "otpSentTo": "OTP sent to +91 {phone}",
-    "otpDevNotice": "Development mode — OTP: {code}",
+    "otpDevNotice": "Demo OTP: {code}",
     "verifyOtp": "Verify & Continue",
     "resendOtp": "Resend OTP",
     "addressFullName": "Full Name",
@@ -216,7 +216,12 @@
     "invalidOtp": "Incorrect OTP. Please try again.",
     "otpExpired": "This OTP has expired. Please request a new one.",
     "outOfStock": "Sorry, this item just went out of stock.",
-    "notFound": "We couldn't find what you're looking for."
+    "notFound": "We couldn't find what you're looking for.",
+    "incorrect": "Incorrect OTP. Please try again.",
+    "expired": "This OTP has expired. Please request a new one.",
+    "not_found": "OTP not found or expired. Please request a new OTP.",
+    "too_many_attempts": "Too many incorrect attempts. Please request a new OTP.",
+    "invalid_phone": "Please enter a valid 10-digit mobile number."
   },
   "Admin": {
     "Nav": {
@@ -234,7 +239,7 @@
       "subtitle": "Aisaheb Agro Industries",
       "mobileNumber": "Mobile Number",
       "sendOtp": "Send OTP",
-      "devNotice": "Development mode — OTP: {code}",
+      "devNotice": "Demo OTP: {code}",
       "enterOtp": "Enter OTP",
       "verifyAndLogin": "Verify & Login",
       "invalidPhone": "Enter a valid 10-digit mobile number.",

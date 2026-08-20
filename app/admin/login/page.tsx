@@ -32,6 +32,9 @@ export default function AdminLoginPage() {
       const data = await res.json();
       setOtpSent(true);
       setDevCode(data.devCode);
+      if (data.devCode) {
+        setOtp(data.devCode);
+      }
     } finally {
       setBusy(false);
     }
@@ -95,9 +98,18 @@ export default function AdminLoginPage() {
       ) : (
         <>
           {devCode && (
-            <p className="mt-4 rounded-md bg-earth-100 px-3 py-2 text-sm font-medium text-earth-700">
-              {t("devNotice", { code: devCode })}
-            </p>
+            <div className="mt-4 flex items-center justify-between rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm">
+              <span className="font-semibold text-brand-800">
+                {t("devNotice", { code: devCode })}
+              </span>
+              <button
+                type="button"
+                onClick={() => setOtp(devCode)}
+                className="rounded bg-brand-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-700"
+              >
+                Fill
+              </button>
+            </div>
           )}
           <label className="mt-4 block text-sm font-medium text-foreground/80">
             {t("enterOtp")}

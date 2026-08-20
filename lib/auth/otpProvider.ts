@@ -35,8 +35,13 @@ export async function requestOtp(phone: string) {
 
   await deliver(phone, code);
 
-  const isDev = process.env.NODE_ENV !== "production";
-  return { devCode: isDev ? code : undefined };
+  // Return OTP on screen for demo/testing whenever console provider is used
+  const isDemoOrDev =
+    process.env.OTP_PROVIDER === "console" ||
+    !process.env.OTP_PROVIDER ||
+    process.env.NODE_ENV !== "production";
+
+  return { devCode: isDemoOrDev ? code : undefined };
 }
 
 export type VerifyOtpResult =

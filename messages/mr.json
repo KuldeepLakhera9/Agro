@@ -117,7 +117,7 @@
     "sendOtp": "OTP पाठवा",
     "otpLabel": "OTP टाका",
     "otpSentTo": "+91 {phone} वर OTP पाठवला आहे",
-    "otpDevNotice": "डेव्हलपमेंट मोड — OTP: {code}",
+    "otpDevNotice": "डेमो / चाचणी OTP: {code}",
     "verifyOtp": "पडताळणी करून पुढे जा",
     "resendOtp": "OTP पुन्हा पाठवा",
     "addressFullName": "पूर्ण नाव",
@@ -216,7 +216,12 @@
     "invalidOtp": "चुकीचा OTP. कृपया पुन्हा प्रयत्न करा.",
     "otpExpired": "या OTP ची मुदत संपली आहे. कृपया नवीन OTP मागवा.",
     "outOfStock": "क्षमस्व, हे उत्पादन नुकतेच स्टॉकमधून संपले.",
-    "notFound": "तुम्ही शोधत असलेले आम्हाला सापडले नाही."
+    "notFound": "तुम्ही शोधत असलेले आम्हाला सापडले नाही.",
+    "incorrect": "चुकीचा OTP. कृपया पुन्हा प्रयत्न करा.",
+    "expired": "या OTP ची मुदत संपली आहे. कृपया नवीन OTP मागवा.",
+    "not_found": "OTP सापडला नाही किंवा मुदत संपली. कृपया नवीन OTP मागवा.",
+    "too_many_attempts": "खूप जास्त चुकीचे प्रयत्न झाले. कृपया नवीन OTP मागवा.",
+    "invalid_phone": "कृपया वैध १० अंकी मोबाईल नंबर टाका."
   },
   "Admin": {
     "Nav": {
@@ -234,7 +239,7 @@
       "subtitle": "आईसाहेब ऍग्रो इंडस्ट्रीज",
       "mobileNumber": "मोबाईल नंबर",
       "sendOtp": "OTP पाठवा",
-      "devNotice": "डेव्हलपमेंट मोड — OTP: {code}",
+      "devNotice": "डेमो / चाचणी OTP: {code}",
       "enterOtp": "OTP टाका",
       "verifyAndLogin": "पडताळणी करून लॉगिन करा",
       "invalidPhone": "वैध १० अंकी मोबाईल नंबर टाका.",

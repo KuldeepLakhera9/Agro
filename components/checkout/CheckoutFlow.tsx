@@ -87,6 +87,9 @@ export default function CheckoutFlow() {
       const data = await res.json();
       setOtpSent(true);
       setDevCode(data.devCode);
+      if (data.devCode) {
+        setOtp(data.devCode);
+      }
     } finally {
       setAuthBusy(false);
     }
@@ -230,9 +233,18 @@ export default function CheckoutFlow() {
                   {t("otpSentTo", { phone })}
                 </p>
                 {devCode && (
-                  <p className="mt-1 rounded-md bg-earth-50 px-3 py-2 text-sm font-medium text-earth-700">
-                    {t("otpDevNotice", { code: devCode })}
-                  </p>
+                  <div className="mt-2 flex items-center justify-between rounded-lg border border-brand-200 bg-brand-50 px-3 py-2 text-sm">
+                    <span className="font-semibold text-brand-800">
+                      {t("otpDevNotice", { code: devCode })}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setOtp(devCode)}
+                      className="rounded bg-brand-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-700"
+                    >
+                      Fill
+                    </button>
+                  </div>
                 )}
                 <label className="mt-4 block text-sm font-medium text-foreground/80">
                   {t("otpLabel")}

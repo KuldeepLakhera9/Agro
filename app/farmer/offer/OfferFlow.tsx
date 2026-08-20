@@ -76,6 +76,9 @@ export default function OfferFlow() {
       const data = await res.json();
       setOtpSent(true);
       setDevCode(data.devCode);
+      if (data.devCode) {
+        setOtp(data.devCode);
+      }
     } finally {
       setBusy(false);
     }
@@ -196,9 +199,18 @@ export default function OfferFlow() {
           ) : (
             <>
               {devCode && (
-                <p className="mb-3 rounded-lg bg-earth-100 px-3 py-2 text-sm font-medium text-earth-700">
-                  डेव्हलपमेंट मोड — OTP: {devCode}
-                </p>
+                <div className="mb-3 flex items-center justify-between rounded-xl border border-brand-200 bg-brand-50 px-3.5 py-2.5 text-sm">
+                  <span className="font-semibold text-brand-800">
+                    डेमो / चाचणी OTP: {devCode}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setOtp(devCode)}
+                    className="rounded-lg bg-brand-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-700"
+                  >
+                    Fill
+                  </button>
+                </div>
               )}
               <label className="block text-base font-semibold text-brand-900">OTP टाका</label>
               <input
